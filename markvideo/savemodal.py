@@ -26,7 +26,7 @@ class SaveModal:
         self._data['description'] = self.entry.get()
         for i in xrange(100000):
             fullName = os.path.join(
-                self._jsonsDir, "%s_%d.json" % (self._prefix, i))
+                self._jsonsDir, "%s_%5d.json" % (self._prefix, i))
             if not os.path.exists(fullName):
                 break
         with open(fullName, "w") as f:

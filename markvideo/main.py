@@ -45,13 +45,17 @@ class Main:
             self._onResize(event.size)
             print "RESIZE", self.screen.get_size()
         elif event.type == locals.KEYDOWN:
-            if event.key == locals.K_RIGHT:
-                self.pos += 1 / clip.fps
+            if event.key in [locals.K_RIGHT, locals.K_LEFT, locals.K_PAGEUP, locals.K_PAGEDOWN]:
+                if event.key == locals.K_RIGHT:
+                    self.pos += 1 / clip.fps
+                elif event.key == locals.K_LEFT:
+                    self.pos -= 1 / clip.fps
+                elif event.key == locals.K_PAGEDOWN:
+                    self.pos += 20 / clip.fps
+                elif event.key == locals.K_PAGEUP:
+                    self.pos -= 20 / clip.fps
                 if self.pos > clip.duration:
                     self.pos = clip.duration
-                self._refreshVideoFrame()
-            elif event.key == locals.K_LEFT:
-                self.pos -= 1 / clip.fps
                 if self.pos < 0:
                     self.pos = 0
                 self._refreshVideoFrame()
