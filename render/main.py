@@ -3,6 +3,7 @@ import clip
 import math
 import render
 import logging
+import json
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -17,11 +18,16 @@ renderCmd.add_argument("--output", required=True)
 renderCmd.add_argument("--withDescription", action='store_true')
 renderCmd.add_argument("--fast", action='store_true')
 renderCmd.add_argument("clips", nargs="+")
+joinClips = subparsers.add_parser("joinClips")
+joinClips.add_argument("--output", required=True)
+joinClips.add_argument("clips", nargs="+")
 args = parser.parse_args()
 
-clips = [clip.Clip(c) for c in args.clips]
+clips = sum([clip.Clip.listFromFile(c) for c in args.clips], [])
 
 if args.cmd == "calculateLength":
+    for c in clips:
+        print "%5.2f %s" % (c.duration(), c.description())
     total = sum([c.duration() for c in clips])
     minutes = int(math.floor(total / 60))
     seconds = int(math.floor(total - minutes * 60))
@@ -35,3 +41,7 @@ elif args.cmd == "render":
     render.Render(
         clips=clips, output=args.output, withDescription=args.withDescription,
         fast=args.fast).go()
+elif args.cmd == "joinClips":
+    asList = [c.data for c in clips]
+    with open(args.output, "w") as f:
+        json.dump(asList, f, indent=2)

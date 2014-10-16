@@ -21,7 +21,7 @@ class Render:
             filename=self._output, size=self._size, fps=self._fps,
             preset="ultrafast" if self._fast else "medium")
         for clip in self._clips:
-            logging.info("Appending clip %d" % self._clips.index(clip))
+            logging.info("Appending clip %d/%d" % (self._clips.index(clip) + 1, len(self._clips)))
             video = clip.open()
             try:
                 if self._withDescription:

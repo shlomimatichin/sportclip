@@ -1,14 +1,28 @@
 import json
 from moviepy import editor
+import moviepy.video.fx.all
+from moviepy import video
 
 
 class Clip:
-    def __init__(self, jsonFilename):
+    def __init__(self, data):
+        self.data = data
+
+    @classmethod
+    def listFromFile(cls, jsonFilename):
         with open(jsonFilename) as f:
-            self.data = json.loads(f.read())
+            data = json.loads(f.read())
+        if isinstance(data, list):
+            return [cls(c) for c in data]
+        else:
+            return [cls(data)]
 
     def duration(self):
-        return self.data['endPosition'] - self.data['beginPosition']
+        result = self.data['endPosition'] - self.data['beginPosition']
+        for effect in self.data.get('effects', []):
+            if effect['type'] == "modify speed":
+                result /= effect['factor']
+        return result
 
     def description(self):
         return self.data['description']
@@ -28,6 +42,11 @@ class Clip:
     def open(self):
         orig = editor.VideoFileClip(self.filename())
         result = orig.subclip(self.data['beginPosition'], self.data['endPosition'])
+        for effect in self.data.get('effects', []):
+            if effect['type'] == "modify speed":
+                result = video.fx.all.speedx(result, factor=effect['factor'])
+            else:
+                raise Exception("Unknown effect: '%s'" % effect['type'])
         def close():
             orig.reader.close()
             orig.audio.reader.close_proc()
