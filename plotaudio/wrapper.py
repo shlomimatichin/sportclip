@@ -2,6 +2,7 @@ import subprocess
 import tempfile
 import os
 
+
 def plot(filename, width, height, pngFilename, waveFilename=None):
     binary = os.path.join(os.path.dirname(__file__), "plotaudio.bin")
     if waveFilename is None:
@@ -10,14 +11,33 @@ def plot(filename, width, height, pngFilename, waveFilename=None):
     else:
         eraseWave = False
     try:
-        subprocess.check_call([
-            'ffmpeg', '-i', filename, '-vn', '-ar', '44100', '-ac', '2', '-f', 'wav', waveFilename])
+        convertToWav(filename, waveFilename)
         subprocess.check_call([
             binary, '--input', waveFilename, '--output', pngFilename,
             "--width", str(width), "--height", str(height)])
     finally:
         if eraseWave and os.path.exists(waveFilename):
             os.unlink(waveFilename)
+
+
+def convertToWav(original, wave):
+    subprocess.check_call([
+        ffmpegExecutable(), '-i', original, '-vn', '-ar', '44100',
+        '-ac', '2', '-f', 'wav', wave])
+
+
+def ffmpegExecutable():
+    try:
+        subprocess.check_output(["which", "ffmpeg"])
+        return 'ffmpeg'
+    except:
+        pass
+    try:
+        subprocess.check_output(["which", "avconv"])
+        return 'avconv'
+    except:
+        pass
+    raise Exception("ffmpeg/avconv not installed")
 
 
 if __name__ == "__main__":

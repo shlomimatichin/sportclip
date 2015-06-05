@@ -1,7 +1,10 @@
 import argparse
 import sys
 import pygame
+import numpy
+import time
 import tempfile
+import os
 from pygame import locals
 from moviepy import editor
 from plotaudio import wrapper
@@ -10,9 +13,11 @@ import audioplayer
 parser = argparse.ArgumentParser()
 parser.add_argument("soundtrackClip")
 args = parser.parse_args()
+wave = args.soundtrackClip + ".wav"
 
-clip = editor.VideoFileClip(args.soundtrackClip)
-audio = clip.audio
+if not os.path.exists(wave):
+    wrapper.convertToWav(args.soundtrackClip, wave)
+audio = editor.AudioFileClip(wave)
 audioPlayer = audioplayer.AudioPlayer(audio)
 
 
@@ -32,6 +37,7 @@ class Main:
                 if event.type == pygame.QUIT:
                     print "QUIT"
                     sys.exit()
+                    return
                 elif event.type == locals.VIDEORESIZE:
                     self._createBackground(event.size)
                     print "RESIZE", self.screen.get_size()

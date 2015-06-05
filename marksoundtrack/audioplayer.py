@@ -38,7 +38,7 @@ class AudioPlayer(threading.Thread):
             self._queue.pop(0)
             lastSample = self._queue[0]
             tt = (1.0/self._fps)*numpy.arange(firstSample, lastSample)
-            sndarray = self._audioClip.to_soundarray(tt,self._nbytes)
+            sndarray = self._audioClip.to_soundarray(tt,self._nbytes, quantize=True)
             chunk = pygame.sndarray.make_sound(sndarray)
             if channel is None:
                 channel = chunk.play()
