@@ -22,7 +22,7 @@ class Main:
     _PROGRESS_RECT = (10, 60, -20, 30)
     _PROGRESS_CENTER_Y = 75
 
-    def __init__(self, width=1000, height=600):
+    def __init__(self, width=1300, height=800):
         pygame.init()
         self.width = width
         self.height = height
@@ -115,7 +115,7 @@ class Main:
         self.background = pygame.Surface(size)
         self.background = self.background.convert()
         self.background.fill(self._BACKGROUND_COLOR)
-        clipSize = (640, 480)
+        clipSize = (1280, 640)
         self._resizedClip = clip.resize(clipSize)
         self._refreshVideoFrame()
 
