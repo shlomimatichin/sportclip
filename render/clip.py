@@ -2,6 +2,7 @@ import json
 from moviepy import editor
 import moviepy.video.fx.all
 from moviepy import video
+import anchorzoom
 
 
 class Clip:
@@ -27,6 +28,9 @@ class Clip:
     def description(self):
         return self.data['description']
 
+    def caption(self):
+        return self.data['caption']
+
     def width(self):
         return self.data['size'][0]
 
@@ -45,6 +49,8 @@ class Clip:
         for effect in self.data.get('effects', []):
             if effect['type'] == "modify speed":
                 result = video.fx.all.speedx(result, factor=effect['factor'])
+            elif effect['type'] == "anchor zoom":
+                result = anchorzoom.anchorZoom(result, anchor=effect['anchor'], factor=effect['factor'])
             else:
                 raise Exception("Unknown effect: '%s'" % effect['type'])
         def close():
